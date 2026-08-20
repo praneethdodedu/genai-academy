@@ -1,0 +1,27 @@
+# Optional — for self-hosting on your own VPS (Option C in DEPLOYMENT.md).
+# Not needed for the recommended Vercel + Render path (Option A).
+#
+# Usage on your VPS:
+#   git clone <your-repo-url> && cd genai-academy
+#   docker compose up -d --build
+# Then point your domain's DNS at the VPS and put a reverse proxy (e.g. Caddy
+# or nginx with Let's Encrypt) in front of ports 80 (frontend) and 8000 (api)
+# for HTTPS — see DEPLOYMENT.md for details.
+
+services:
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ALLOWED_ORIGINS=http://localhost,http://localhost:80
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: "" # same-origin: frontend calls /api, proxy routes it to backend
+    restart: unless-stopped
+    ports:
+      - "80:80"

@@ -1,0 +1,25 @@
+# Render Blueprint — deploys the FastAPI backend as a free web service.
+#
+# Usage:
+#   1. Push this repo to GitHub.
+#   2. In Render, click "New +" -> "Blueprint" and point it at your repo.
+#   3. Render reads this file and creates the service automatically.
+#   4. After the frontend is deployed (e.g. to Vercel), come back and set
+#      ALLOWED_ORIGINS below (or in the Render dashboard) to your frontend's
+#      real URL, then redeploy.
+#
+# See DEPLOYMENT.md for the full walkthrough.
+
+services:
+  - type: web
+    name: genai-academy-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: "http://localhost:5173"
+        # ^ Update this to your deployed frontend URL, e.g.
+        # https://genai-academy.vercel.app — comma-separate multiple origins.
