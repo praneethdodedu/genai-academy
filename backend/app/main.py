@@ -9,11 +9,13 @@ Run locally:
 
 Endpoints:
     GET /api/health
+    GET /api/nav
     GET /api/topics
     GET /api/topics/{topic_id}
     GET /api/topics/{topic_id}/{level}
     GET /api/lessons/{topic_id}/{level}/{lesson_id}
     GET /api/search?q=...
+    GET /api/instructor
 """
 
 import os
@@ -22,6 +24,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from .data import TOPICS, LESSONS, LEVELS, LEVEL_META
+from .instructor import INSTRUCTOR, FIELD_NOTES
 
 app = FastAPI(
     title="GenAI Academy API",
@@ -78,6 +81,31 @@ def _lesson_summary(lesson: dict) -> dict:
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/api/nav")
+def get_nav():
+    """Full curriculum tree in one payload — powers the persistent sidebar."""
+    topics = []
+    for topic in TOPICS:
+        levels = {}
+        for level in LEVELS:
+            levels[level] = {
+                "label": LEVEL_META[level]["label"],
+                "lessons": [
+                    {"id": l["id"], "title": l["title"], "minutes": l["minutes"]}
+                    for l in LESSONS[topic["id"]][level]
+                ],
+            }
+        topics.append(
+            {
+                "id": topic["id"],
+                "name": topic["name"],
+                "color": topic["color"],
+                "levels": levels,
+            }
+        )
+    return {"topics": topics, "level_order": LEVELS}
 
 
 @app.get("/api/topics")
@@ -139,14 +167,25 @@ def get_lesson(topic_id: str, level: str, lesson_id: str):
     prev_lesson = lessons[index - 1] if index > 0 else None
     next_lesson = lessons[index + 1] if index < len(lessons) - 1 else None
 
+    # Build a copy rather than mutating the shared LESSONS dict — attach a
+    # "field note" (a real-world callout from Praneeth's own projects) when
+    # one exists for this lesson.
+    lesson_with_note = {**lesson, "field_note": FIELD_NOTES.get(lesson_id)}
+
     return {
         "topic": {"id": topic["id"], "name": topic["name"], "color": topic["color"]},
         "level": {"id": level, **LEVEL_META[level]},
-        "lesson": lesson,
+        "lesson": lesson_with_note,
         "prev": _lesson_summary(prev_lesson) if prev_lesson else None,
         "next": _lesson_summary(next_lesson) if next_lesson else None,
         "position": {"index": index + 1, "total": len(lessons)},
     }
+
+
+@app.get("/api/instructor")
+def get_instructor():
+    """The instructor profile shown on the About page and referenced by the home hero."""
+    return INSTRUCTOR
 
 
 @app.get("/api/search")

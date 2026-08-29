@@ -27,6 +27,10 @@ export function getTopics() {
   return request("/api/topics");
 }
 
+export function getNav() {
+  return request("/api/nav");
+}
+
 export function getTopic(topicId) {
   return request(`/api/topics/${encodeURIComponent(topicId)}`);
 }
@@ -44,4 +48,8 @@ export function getLesson(topicId, level, lessonId) {
 export function search(query) {
   if (!query || !query.trim()) return Promise.resolve({ results: [] });
   return request(`/api/search?q=${encodeURIComponent(query)}`);
+}
+
+export function getInstructor() {
+  return request("/api/instructor");
 }

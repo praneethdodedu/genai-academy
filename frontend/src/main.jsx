@@ -5,12 +5,15 @@ import './index.css'
 import './styles.css'
 import App from './App.jsx'
 import { ProgressProvider } from './context/ProgressContext.jsx'
+import { NavProvider } from './context/NavContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <ProgressProvider>
-        <App />
+        <NavProvider>
+          <App />
+        </NavProvider>
       </ProgressProvider>
     </BrowserRouter>
   </StrictMode>,

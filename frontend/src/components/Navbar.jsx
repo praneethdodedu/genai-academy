@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { search as searchApi } from '../lib/api.js'
+import { IconMenu, IconClose } from './icons.jsx'
 
-export default function Navbar() {
+export default function Navbar({ drawerOpen, onMenuClick }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [open, setOpen] = useState(false)
@@ -41,13 +42,34 @@ export default function Navbar() {
 
   return (
     <header className="navbar">
-      <div className="container navbar__inner">
+      <div className="navbar__inner">
+        <button
+          type="button"
+          className="navbar__menu-btn"
+          aria-label={drawerOpen ? 'Close navigation' : 'Open navigation'}
+          aria-expanded={drawerOpen}
+          onClick={onMenuClick}
+        >
+          {drawerOpen ? <IconClose width={20} height={20} /> : <IconMenu width={20} height={20} />}
+        </button>
+
         <Link to="/" className="navbar__brand">
-          <span className="navbar__logo" aria-hidden="true">◆</span>
+          <span className="navbar__logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+              <path
+                d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"
+                fill="#fff"
+              />
+            </svg>
+          </span>
           <span>GenAI Academy</span>
         </Link>
 
         <div className="navbar__search" ref={boxRef}>
+          <svg className="navbar__search-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.75" />
+            <path d="M21 21l-4.3-4.3" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+          </svg>
           <input
             type="search"
             placeholder="Search lessons…"
@@ -81,6 +103,10 @@ export default function Navbar() {
             </div>
           )}
         </div>
+
+        <Link to="/about" className="navbar__link">
+          About
+        </Link>
       </div>
     </header>
   )

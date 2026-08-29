@@ -5,6 +5,7 @@ import Loader from '../components/Loader.jsx'
 import ErrorState from '../components/ErrorState.jsx'
 import ProgressBar from '../components/ProgressBar.jsx'
 import LessonRow from '../components/LessonRow.jsx'
+import { TOPIC_ICONS } from '../components/icons.jsx'
 import { useProgress } from '../context/ProgressContext.jsx'
 
 const LEVEL_ORDER = ['basics', 'intermediate', 'pro']
@@ -45,13 +46,14 @@ export default function TopicPage() {
   const level = topic.levels[activeLevel]
   const lessonIds = level.lessons.map((l) => l.id)
   const done = completedCount(lessonIds)
+  const Icon = TOPIC_ICONS[topic.id]
 
   return (
     <div className="container section">
       <Link to="/" className="back-link">← All topics</Link>
 
       <div className="topic-header" style={{ '--topic-color': topic.color }}>
-        <span className="topic-header__dot" />
+        <span className="topic-header__icon">{Icon && <Icon width={24} height={24} />}</span>
         <div>
           <h1>{topic.name}</h1>
           <p className="topic-header__tagline">{topic.tagline}</p>

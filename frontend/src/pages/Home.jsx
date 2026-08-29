@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { getTopics } from '../lib/api.js'
 import TopicCard from '../components/TopicCard.jsx'
 import Loader from '../components/Loader.jsx'
 import ErrorState from '../components/ErrorState.jsx'
 import { useProgress } from '../context/ProgressContext.jsx'
+import instructorPhoto from '../assets/instructor-photo.jpg'
 
 export default function Home() {
   const [topics, setTopics] = useState(null)
@@ -29,38 +31,76 @@ export default function Home() {
 
   return (
     <>
-      <section className="hero">
+      <section className="hero hero--profile">
         <div className="container hero__inner">
-          <span className="eyebrow">Basics → Intermediate → Pro</span>
-          <h1>Learn AI, GenAI, RAG &amp; Prompt Engineering</h1>
-          <p className="hero__subtitle">
-            A structured, self-paced path from first principles to production-grade skills —
-            covering how AI actually works, how generative models create content, how to ground
-            them in real data with RAG, and how to prompt them effectively.
-          </p>
-          {totalLessons !== null && (
-            <div className="hero__stats">
-              <div className="stat">
-                <span className="stat__value">{totalLessons}</span>
-                <span className="stat__label">lessons</span>
-              </div>
-              <div className="stat">
-                <span className="stat__value">4</span>
-                <span className="stat__label">topics</span>
-              </div>
-              <div className="stat">
-                <span className="stat__value">{totalCompleted}</span>
-                <span className="stat__label">completed</span>
-              </div>
+          <div className="hero__content">
+            <span className="eyebrow eyebrow--dark">Basics → Intermediate → Pro</span>
+            <p className="hero__hello">Hi, I'm</p>
+            <h1 className="hero__name">Praneeth Dodedu</h1>
+            <p className="hero__role">
+              AI Engineering Lead building <span className="hero__role-highlight">GenAI, RAG &amp; agentic systems<span className="hero__cursor" aria-hidden="true" /></span>
+            </p>
+            <p className="hero__subtitle hero__subtitle--dark">
+              This course is the structured, self-paced path I wish I'd had — from first
+              principles to production-grade skills, taught through real lessons from systems
+              I've actually shipped.
+            </p>
+
+            <div className="hero__cta-row">
+              <a href="#choose-topic" className="btn btn--accent">
+                Start learning
+              </a>
+              <Link to="/about" className="btn btn--outline-light">
+                About the instructor →
+              </Link>
             </div>
-          )}
+
+            {totalLessons !== null && (
+              <div className="hero__stats hero__stats--dark">
+                <div className="stat">
+                  <span className="stat__value">{totalLessons}</span>
+                  <span className="stat__label">lessons</span>
+                </div>
+                <div className="stat">
+                  <span className="stat__value">4</span>
+                  <span className="stat__label">topics</span>
+                </div>
+                <div className="stat">
+                  <span className="stat__value">{totalCompleted}</span>
+                  <span className="stat__label">completed</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="hero__portrait">
+            <span className="hero__portrait-ring" aria-hidden="true" />
+            <span className="hero__portrait-dot hero__portrait-dot--1" aria-hidden="true" />
+            <span className="hero__portrait-dot hero__portrait-dot--2" aria-hidden="true" />
+            <img src={instructorPhoto} alt="Praneeth Dodedu" className="hero__portrait-img" />
+            <span className="hero__portrait-vignette" aria-hidden="true" />
+            {totalLessons !== null && (
+              <div className="hero__floating-card">
+                <span className="hero__floating-card-value">{totalLessons}</span>
+                <span className="hero__floating-card-label">
+                  Lessons across 4 topics
+                  <br />
+                  Basics to Pro
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
-      <section className="container section">
+      <section className="container section" id="choose-topic" style={{ scrollMarginTop: '80px' }}>
         <div className="section__header">
           <h2>Choose a topic</h2>
-          <p>Each topic is organized into three levels so you can start wherever you are.</p>
+          <p>
+            Each topic is organized into three levels so you can start wherever you are. Look for
+            the <span className="field-note-hint">◆ From the field</span> callouts — real notes
+            from production systems Praneeth has actually shipped.
+          </p>
         </div>
 
         {error && <ErrorState message={`Couldn't load topics: ${error}`} onRetry={load} />}
